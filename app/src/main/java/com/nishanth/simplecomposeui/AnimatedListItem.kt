@@ -38,6 +38,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun AnimatedListItem(
     item: ListItem,
+    maxScaleFactor: Float,
     modifier: Modifier = Modifier,
     onItemClick: (ListItem) -> Unit,
     onItemLongPress: (ListItem) -> Unit,
@@ -56,7 +57,7 @@ fun AnimatedListItem(
     // Trigger animation when shouldAnimate changes
     LaunchedEffect(shouldAnimate) {
         if (shouldAnimate) {
-            animationScale = 2f
+            animationScale = maxScaleFactor
             delay(500)
             animationScale = 1f
         }

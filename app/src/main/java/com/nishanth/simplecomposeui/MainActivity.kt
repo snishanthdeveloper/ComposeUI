@@ -5,13 +5,17 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -82,7 +86,7 @@ fun MainScreen(viewModel: HorizontalListViewModel) {
             }
         } else {
             // Horizontal list
-            HorizontalAnimatedList(
+            /*HorizontalAnimatedList(
                 listItems = listItems,
                 modifier = Modifier.padding(top = 16.dp),
                 onItemClick = { item ->
@@ -94,10 +98,40 @@ fun MainScreen(viewModel: HorizontalListViewModel) {
                     Toast.makeText(context, "Long pressed: ${item.title}", Toast.LENGTH_SHORT)
                         .show()
                 }
-            )
+            )*/
+            HorizontalListCombinedScreen(listItems)
         }
 
         // Additional content can go here
         Spacer(modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun HorizontalListCombinedScreen(
+    listItems: List<ListItem>
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()) // allow scrolling if needed
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        Text("With Scroll (Auto-Center)", style = MaterialTheme.typography.titleMedium)
+
+        HorizontalAnimatedListWithScroll(
+            listItems = listItems,
+            onItemClick = {},        // Disabled click
+            onItemLongPress = {}     // Disabled long press
+        )
+
+        Text("Without Scroll", style = MaterialTheme.typography.titleMedium)
+
+        HorizontalAnimatedList(
+            listItems = listItems,
+            onItemClick = {},
+            onItemLongPress = {}
+        )
     }
 }
