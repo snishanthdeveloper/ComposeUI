@@ -27,10 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import kotlinx.coroutines.delay
 
 @Composable
@@ -39,7 +41,8 @@ fun AnimatedListItem(
     modifier: Modifier = Modifier,
     onItemClick: (ListItem) -> Unit,
     onItemLongPress: (ListItem) -> Unit,
-    shouldAnimate: Boolean = false
+    shouldAnimate: Boolean = false,
+    zIndex: Float = 0f
 ) {
     var animationScale by remember { mutableStateOf(1f) }
 
@@ -63,7 +66,12 @@ fun AnimatedListItem(
         modifier = modifier
             .width(200.dp)
             .height(150.dp)
-            .scale(scale)
+            .graphicsLayer(
+                scaleX = scale,
+                scaleY = scale,
+                clip = false // Don't clip the scaled content
+            )
+            .zIndex(zIndex) // Bring animating items to front
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { onItemClick(item) },

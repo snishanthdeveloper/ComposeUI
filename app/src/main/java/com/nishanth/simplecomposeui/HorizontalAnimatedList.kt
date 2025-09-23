@@ -46,6 +46,8 @@ fun HorizontalAnimatedList(
             val shouldAnimate = (index == 0 && firstItemShouldAnimate) ||
                     (animatingItemId == item.id)
 
+            val isAnimating = shouldAnimate
+
             AnimatedListItem(
                 item = item,
                 onItemClick = onItemClick,
@@ -58,7 +60,8 @@ fun HorizontalAnimatedList(
                     }
                     onItemLongPress(clickedItem)
                 },
-                shouldAnimate = shouldAnimate
+                shouldAnimate = shouldAnimate,
+                zIndex = if (isAnimating) 1f else 0f
             )
         }
     }
