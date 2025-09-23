@@ -4,102 +4,100 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: HorizontalListViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(this)[HorizontalListViewModel::class.java]
+
         setContent {
-            SimpleComposeApp()
+            MainScreen(viewModel = viewModel)
         }
+
+        viewModel.loadData()
 
     }
 }
 
+// Main screen composable
 @Composable
-fun SimpleComposeApp() {
-    // State to hold input text
-    var name by remember { mutableStateOf(TextFieldValue("")) }
+fun MainScreen(viewModel: HorizontalListViewModel) {
+    val listItems by viewModel.listItems.observeAsState(emptyList())
+    val isLoading by viewModel.isLoading.observeAsState(false)
     val context = LocalContext.current
 
-    // Layout
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(Color.White)
     ) {
-        Text(
-            text = "Welcome to Compose!",
-            fontSize = 24.sp
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Input field
-        BasicTextField(
-            value = name,
-            onValueChange = { name = it },
+        // Header
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            decorationBox = { innerTextField ->
-                if (name.text.isEmpty()) {
-                    Text(
-                        text = "Enter your name...",
-                        color = androidx.compose.ui.graphics.Color.Gray
-                    )
-                }
-                innerTextField() // 👈 Displays the actual text input
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Home Screen",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        // Loading indicator
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
-        )
+        } else {
+            // Horizontal list
+            HorizontalAnimatedList(
+                listItems = listItems,
+                modifier = Modifier.padding(top = 16.dp),
+                onItemClick = { item ->
+                    // Navigate to next screen
+                    Toast.makeText(context, "Clicked: ${item.title}", Toast.LENGTH_SHORT).show()
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Button
-        Button(onClick = {
-            Toast.makeText(
-                context,
-                "Hello, ${name.text.ifEmpty { "User" }}!",
-                Toast.LENGTH_SHORT
-            ).show()
-        }) {
-            Text(text = "Say Hello")
+                },
+                onItemLongPress = { item ->
+                    Toast.makeText(context, "Long pressed: ${item.title}", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Display user input
-        if (name.text.isNotEmpty()) {
-            Text(text = "Hello, ${name.text}!", fontSize = 20.sp)
-        }
+        // Additional content can go here
+        Spacer(modifier = Modifier.weight(1f))
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewSimpleComposeApp() {
-    SimpleComposeApp()
 }
