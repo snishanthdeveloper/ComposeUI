@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProductGrid() {
-    val products = (1..40).map { "Item $it" }
+    val products = (1..10).map { "Item $it" }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),

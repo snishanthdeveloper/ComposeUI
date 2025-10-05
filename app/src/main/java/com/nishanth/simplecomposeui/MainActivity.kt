@@ -31,11 +31,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            ProductGrid()
+            SmartLayoutSwitcher()
         }
-
     }
 }
+
 
 @Composable
 fun SimpleComposeApp() {
