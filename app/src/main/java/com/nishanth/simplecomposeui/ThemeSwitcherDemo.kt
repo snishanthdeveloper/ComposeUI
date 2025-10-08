@@ -1,12 +1,16 @@
 package com.nishanth.simplecomposeui
 
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -27,74 +31,41 @@ import androidx.compose.ui.unit.dp
 @Composable
 @Preview
 fun ThemeSwitcherDemo() {
-    var isDark by remember { mutableStateOf(false) }
+    var isDarkTheme by remember { mutableStateOf(false) }
 
-    // Animate background color between themes
-    val animatedBg by animateColorAsState(
-        targetValue = if (isDark) Color(0xFF121212) else Color(0xFFF5F5F5),
-        animationSpec = tween(700)
-    )
+    val transition = updateTransition(targetState = isDarkTheme, label = "themeTransition")
+    val backgroundColor by transition.animateColor(label = "bgColor") {
+        if (it) Color(0xFF121212) else Color(0xFFF9F9F9)
+    }
 
-    MyAppTheme(darkTheme = isDark) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(animatedBg)
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                // Title
-                Text(
-                    text = if (isDark) "Dark Theme 🌙" else "Light Theme ☀️",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+    val gradient1 by transition.animateColor(label = "grad1") {
+        if (it) Color(0xFFD0BCFF) else Color(0xFF6750A4)
+    }
+    val gradient2 by transition.animateColor(label = "grad2") {
+        if (it) Color(0xFFB69DF8) else Color(0xFF9575CD)
+    }
 
-                // Toggle
-                Switch(
-                    checked = isDark,
-                    onCheckedChange = { isDark = it },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.primary,
-                        uncheckedThumbColor = MaterialTheme.colorScheme.secondary
-                    )
-                )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(backgroundColor)
+            .padding(24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = if (isDarkTheme) "Dark Theme 🌙" else "Light Theme ☀️",
+                style = MaterialTheme.typography.headlineMedium,
+                color = if (isDarkTheme) Color.White else Color.Black
+            )
 
-                // 3 Animated Gradient Cards
-                GradientCard(
-                    title = "Primary Colors",
-                    gradient = Brush.linearGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.primary,
-                            MaterialTheme.colorScheme.secondary
-                        )
-                    )
-                )
+            Spacer(Modifier.height(16.dp))
+            Switch(checked = isDarkTheme, onCheckedChange = { isDarkTheme = it })
 
-                GradientCard(
-                    title = "Tertiary + Secondary",
-                    gradient = Brush.linearGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.tertiary,
-                            MaterialTheme.colorScheme.secondary
-                        )
-                    )
-                )
-
-                GradientCard(
-                    title = "Inverse Surface",
-                    gradient = Brush.linearGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.inverseSurface,
-                            MaterialTheme.colorScheme.primary
-                        )
-                    )
-                )
-            }
+            Spacer(Modifier.height(32.dp))
+            AnimatedGradientCard("Primary Colors", gradient1, gradient2)
+            AnimatedGradientCard("Tertiary + Secondary", Color(0xFFEFB8C8), Color(0xFF7D5260))
+            AnimatedGradientCard("Inverse Surface", Color(0xFF1C1B1F), Color(0xFF6750A4))
         }
     }
 }
