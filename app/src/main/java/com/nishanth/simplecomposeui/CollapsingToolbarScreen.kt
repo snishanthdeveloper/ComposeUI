@@ -21,7 +21,7 @@ fun CollapsingToolbarScreen() {
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             LargeTopAppBar(
-                title = { Text("Compose Adventures") },
+                title = { AnimatedTitle("Compose Adventures",0.5f) },
                 scrollBehavior = scrollBehavior,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
