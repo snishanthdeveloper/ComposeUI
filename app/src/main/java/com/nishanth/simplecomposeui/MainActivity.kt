@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CollapsingToolbarScreen()
+            Dashboard2DScrollScreen()
         }
 
     }
